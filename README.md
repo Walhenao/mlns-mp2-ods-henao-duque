@@ -3,6 +3,11 @@
 App Streamlit para predecir el ODS de un texto en espanol.
 Modelo: pipeline TF-IDF + TruncatedSVD + LinearSVC (Walter Henao / Duvan Duque).
 
+## URLs
+
+- Repo: https://github.com/Walhenao/mlns-mp2-ods-henao-duque
+- App Streamlit: desplegar en https://share.streamlit.io (cuenta Community, repo publico, main file `streamlit_app.py`, Python 3.10)
+
 ## Correr en local
 
 ```bash
@@ -11,12 +16,12 @@ pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-## Despliegue
+## Deploy en Streamlit Cloud
 
-- Repo GitHub publico
-- Streamlit Community Cloud: main file `streamlit_app.py`, Python 3.10
-
-## URLs
-
-- App: (se completa al desplegar)
-- Repo: (se completa al publicar)
+1. Entrar a https://share.streamlit.io e iniciar sesion con GitHub
+2. New app / Deploy from GitHub
+3. Repo: `Walhenao/mlns-mp2-ods-henao-duque`
+4. Branch: `main`
+5. Main file: `streamlit_app.py`
+6. Advanced: Python 3.10
+7. Copiar la URL publica de la app al notebook (seccion 7)
