@@ -75,11 +75,49 @@ st.markdown(
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
   }
   .atlas-grid img, .atlas-grid svg { width: 100%; height: auto; display: block; }
-  .atlas-item { line-height: 0; opacity: 0.9; transition: opacity .2s; }
+  .atlas-item {
+    position: relative;
+    line-height: 0;
+    opacity: 0.9;
+    transition: opacity .2s;
+    cursor: help;
+  }
   .atlas-item.dim { opacity: 0.28; }
   .atlas-item.active {
     opacity: 1; outline: 2px solid var(--accent, #001a70); outline-offset: 2px;
   }
+  .atlas-item .tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    background: #161616;
+    color: #fff;
+    font-size: 0.72rem;
+    line-height: 1.3;
+    padding: 0.4rem 0.55rem;
+    white-space: nowrap;
+    max-width: 220px;
+    white-space: normal;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .15s ease;
+    z-index: 20;
+    box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  }
+  .atlas-item .tip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #161616;
+  }
+  .atlas-item:hover { opacity: 1; z-index: 5; }
+  .atlas-item:hover .tip { opacity: 1; visibility: visible; }
   .atlas-note { margin: 0.75rem 0 0; font-size: 0.72rem; color: #888; line-height: 1.35; }
   .empty-box {
     border: 1px solid #e2dfd8; background: #faf9f6; padding: 1.35rem 1rem;
@@ -152,7 +190,13 @@ def atlas_html(active: int | None = None) -> str:
         cls = "atlas-item"
         if active is not None:
             cls += " active" if n == active else " dim"
-        cells.append(f'<div class="{cls}">{icon_svg(n, 56)}</div>')
+        nombre = ODS_NOMBRE.get(n, "")
+        cells.append(
+            f'<div class="{cls}" aria-label="ODS {n}: {nombre}">'
+            f'{icon_svg(n, 56)}'
+            f'<span class="tip">ODS {n}<br/>{nombre}</span>'
+            f"</div>"
+        )
     accent = ODS_COLOR.get(active or 1, "#001a70")
     return f"""
     <div class="atlas-box" style="--accent:{accent}">
