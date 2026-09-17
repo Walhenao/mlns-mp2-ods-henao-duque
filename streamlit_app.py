@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
-"""App Streamlit: texto libre -> prediccion ODS (mismo pipeline del MP2)."""
+"""App Streamlit: texto libre -> prediccion ODS."""
 from pathlib import Path
 
-import joblib
 import streamlit as st
 
-st.set_page_config(
-    page_title="Clasificador ODS",
-    layout="centered",
-)
+st.set_page_config(page_title="Clasificador ODS", layout="centered")
 
 ODS_NOMBRE = {
     1: "Fin de la pobreza",
@@ -30,25 +26,33 @@ ODS_NOMBRE = {
     17: "Alianzas",
 }
 
-MODEL_PATH = Path(__file__).resolve().parent / "models" / "modelo_ods.joblib"
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "models" / "modelo_ods.joblib"
 
 
 @st.cache_resource
 def load_model():
-    # NLTK se prepara al cargar el modelo (no al importar el script)
+    import joblib
     from text_preprocess import _ensure_nltk
 
-    _ensure_nltk()
+    try:
+        _ensure_nltk()
+    except Exception as exc:
+        # No tumbar la app si NLTK falla al descargar; se reintenta al predecir
+        st.warning(f"Aviso NLTK: {exc}")
     if not MODEL_PATH.exists():
-        raise FileNotFoundError(f"No se encontro el modelo: {MODEL_PATH}")
+        raise FileNotFoundError(
+            f"No se encontro el modelo en {MODEL_PATH}. "
+            f"Archivos en models/: {list((BASE_DIR / 'models').glob('*'))}"
+        )
     return joblib.load(MODEL_PATH)
 
 
 st.title("Clasificador de textos ODS")
 st.write(
     "Pegue un texto en espanol y el modelo predice el Objetivo de Desarrollo "
-    "Sostenible (ODS) mas relacionado. Usamos el mismo pipeline del "
-    "Microproyecto 2 (TF-IDF + LSA + LinearSVC)."
+    "Sostenible (ODS) mas relacionado. Pipeline del Microproyecto 2: "
+    "TF-IDF + LSA + LinearSVC."
 )
 
 texto = st.text_area(
@@ -57,7 +61,11 @@ texto = st.text_area(
     placeholder="Ejemplo: Programas de educacion primaria y formacion docente...",
 )
 
-if st.button("Predecir ODS"):
+col1, col2 = st.columns([1, 3])
+with col1:
+    predecir = st.button("Predecir ODS")
+
+if predecir:
     if not texto or not str(texto).strip():
         st.warning("Escriba o pegue un texto para predecir.")
     else:
@@ -67,4 +75,4 @@ if st.button("Predecir ODS"):
             nombre = ODS_NOMBRE.get(pred, "ODS")
             st.success(f"Prediccion: ODS {pred} - {nombre}")
         except Exception as exc:
-            st.error(f"Error al predecir: {exc}")
+            st.exception(exc)
