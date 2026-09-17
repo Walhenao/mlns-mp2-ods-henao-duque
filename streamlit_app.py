@@ -231,13 +231,27 @@ if "pred_result" not in st.session_state:
 if "texto" not in st.session_state:
     st.session_state.texto = ""
 
-# Chips
+
+def _clear_form() -> None:
+    st.session_state.texto = ""
+    st.session_state.pred_result = None
+
+
+def _set_example(sample: str) -> None:
+    st.session_state.texto = sample
+    st.session_state.pred_result = None
+
+
+# Chips (on_click corre antes de recrear el text_area)
 chip_cols = st.columns(len(EXAMPLES))
 for col, (label, sample) in zip(chip_cols, EXAMPLES.items()):
-    if col.button(label, key=f"chip_{label}", use_container_width=True):
-        st.session_state.texto = sample
-        st.session_state.pred_result = None
-        st.rerun()
+    col.button(
+        label,
+        key=f"chip_{label}",
+        use_container_width=True,
+        on_click=_set_example,
+        args=(sample,),
+    )
 
 left, right = st.columns([0.92, 1.55], gap="large")
 
@@ -250,12 +264,11 @@ with right:
     )
     b1, b2 = st.columns([1, 1])
     predict = b1.button("Predecir ODS", type="primary", use_container_width=True)
-    clear = b2.button("Limpiar", use_container_width=True)
-
-    if clear:
-        st.session_state.texto = ""
-        st.session_state.pred_result = None
-        st.rerun()
+    b2.button(
+        "Limpiar",
+        use_container_width=True,
+        on_click=_clear_form,
+    )
 
     if predict:
         txt = str(st.session_state.get("texto", "")).strip()
