@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""App Streamlit E3: atlas ODS + prediccion con score relativo."""
+"""App Streamlit E3: atlas ODS + predicción con score relativo."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -14,11 +14,11 @@ MODEL_PATH = BASE_DIR / "models" / "modelo_ods.joblib"
 LOGO_PATH = BASE_DIR / "assets" / "logo_uniandes.png"
 
 EXAMPLES = {
-    "Educacion": "Programas de educacion primaria y formacion docente en zonas rurales",
-    "Salud": "Acceso a hospitales, vacunacion y atencion en salud mental",
-    "Genero": "Igualdad de genero, empoderamiento de mujeres y prevencion de violencia",
-    "Clima": "Mitigacion del cambio climatico y reduccion de emisiones de gases",
-    "Justicia": "Justicia, transparencia institucional y lucha contra la corrupcion",
+    "Educación": "Programas de educación primaria y formación docente en zonas rurales",
+    "Salud": "Acceso a hospitales, vacunación y atención en salud mental",
+    "Género": "Igualdad de género, empoderamiento de mujeres y prevención de violencia",
+    "Clima": "Mitigación del cambio climático y reducción de emisiones de gases",
+    "Justicia": "Justicia, transparencia institucional y lucha contra la corrupción",
 }
 
 st.set_page_config(
@@ -32,7 +32,7 @@ st.markdown(
     """
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600&family=Source+Sans+3:wght@400;500;600&display=swap');
-  /* Forzar aspecto claro (entrega academica Uniandes) */
+  /* Forzar aspecto claro (entrega académica Uniandes) */
   html, body, [data-testid="stAppViewContainer"], .stApp {
     background-color: #ffffff !important;
     color: #161616 !important;
@@ -168,7 +168,7 @@ def load_model():
 
     _ensure_nltk()
     if not MODEL_PATH.exists():
-        raise FileNotFoundError(f"No se encontro: {MODEL_PATH}")
+        raise FileNotFoundError(f"No se encontró: {MODEL_PATH}")
     return joblib.load(MODEL_PATH)
 
 
@@ -279,7 +279,7 @@ st.markdown(
 )
 
 st.markdown("## Clasificador de textos ODS")
-st.caption("Escribe un texto libre en espanol o elige un ejemplo rapido.")
+st.caption("Escribe un texto libre en español o elige un ejemplo rápido.")
 
 if "pred_result" not in st.session_state:
     st.session_state.pred_result = None
@@ -314,7 +314,7 @@ with right:
     st.text_area(
         "Texto a clasificar",
         height=140,
-        placeholder="Ejemplo: Programas de educacion primaria y formacion docente...",
+        placeholder="Ejemplo: Programas de educación primaria y formación docente...",
         key="texto",
     )
     b1, b2 = st.columns([1, 1])
@@ -340,13 +340,13 @@ with right:
                     "top3": ranked[:3],
                 }
             except Exception as exc:
-                st.error("No se pudo predecir. Detalle tecnico:")
+                st.error("No se pudo predecir. Detalle técnico:")
                 st.exception(exc)
 
     result = st.session_state.pred_result
     if result is None:
         st.markdown(
-            '<div class="empty-box">El objetivo predicho aparecera aqui<br/>'
+            '<div class="empty-box">El objetivo predicho aparecerá aquí<br/>'
             "con logo, score relativo y top 3.</div>",
             unsafe_allow_html=True,
         )
