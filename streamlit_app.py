@@ -32,15 +32,26 @@ st.markdown(
     """
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600&family=Source+Sans+3:wght@400;500;600&display=swap');
+  /* Forzar aspecto claro (entrega academica Uniandes) */
+  html, body, [data-testid="stAppViewContainer"], .stApp {
+    background-color: #ffffff !important;
+    color: #161616 !important;
+  }
+  [data-testid="stHeader"] { background: #ffffff !important; }
   html, body, [class*="css"]  {
     font-family: "Source Sans 3", "Segoe UI", sans-serif;
   }
   h1, h2, h3, .serif {
     font-family: "Source Serif 4", Georgia, serif !important;
     font-weight: 600 !important;
+    color: #161616 !important;
   }
   .block-container { padding-top: 1.2rem; padding-bottom: 2rem; max-width: 1180px; }
   #MainMenu, footer, header { visibility: hidden; }
+  .stTextArea textarea {
+    background-color: #fafaf8 !important;
+    color: #333 !important;
+  }
   .color-strip { display: flex; height: 5px; margin: 0 0 1rem 0; }
   .color-strip span { flex: 1; }
   .brand-row { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.35rem; }
