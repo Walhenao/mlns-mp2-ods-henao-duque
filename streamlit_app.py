@@ -6,6 +6,9 @@ import streamlit as st
 
 st.set_page_config(page_title="Clasificador ODS", layout="centered")
 
+st.title("Clasificador de textos ODS")
+st.caption("Microproyecto 2 MLNS - Walter Henao / Duvan Duque")
+
 ODS_NOMBRE = {
     1: "Fin de la pobreza",
     2: "Hambre cero",
@@ -35,25 +38,11 @@ def load_model():
     import joblib
     from text_preprocess import _ensure_nltk
 
-    try:
-        _ensure_nltk()
-    except Exception as exc:
-        # No tumbar la app si NLTK falla al descargar; se reintenta al predecir
-        st.warning(f"Aviso NLTK: {exc}")
+    _ensure_nltk()
     if not MODEL_PATH.exists():
-        raise FileNotFoundError(
-            f"No se encontro el modelo en {MODEL_PATH}. "
-            f"Archivos en models/: {list((BASE_DIR / 'models').glob('*'))}"
-        )
+        raise FileNotFoundError(f"No se encontro: {MODEL_PATH}")
     return joblib.load(MODEL_PATH)
 
-
-st.title("Clasificador de textos ODS")
-st.write(
-    "Pegue un texto en espanol y el modelo predice el Objetivo de Desarrollo "
-    "Sostenible (ODS) mas relacionado. Pipeline del Microproyecto 2: "
-    "TF-IDF + LSA + LinearSVC."
-)
 
 texto = st.text_area(
     "Texto a clasificar",
@@ -61,18 +50,14 @@ texto = st.text_area(
     placeholder="Ejemplo: Programas de educacion primaria y formacion docente...",
 )
 
-col1, col2 = st.columns([1, 3])
-with col1:
-    predecir = st.button("Predecir ODS")
-
-if predecir:
-    if not texto or not str(texto).strip():
+if st.button("Predecir ODS"):
+    if not str(texto).strip():
         st.warning("Escriba o pegue un texto para predecir.")
     else:
         try:
             model = load_model()
             pred = int(model.predict([texto])[0])
-            nombre = ODS_NOMBRE.get(pred, "ODS")
-            st.success(f"Prediccion: ODS {pred} - {nombre}")
+            st.success(f"Prediccion: ODS {pred} - {ODS_NOMBRE.get(pred, 'ODS')}")
         except Exception as exc:
+            st.error("No se pudo predecir. Detalle tecnico:")
             st.exception(exc)
